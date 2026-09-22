@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-// Datos iniciales en caso de que no haya nada en el almacenamiento local
 const datosIniciales = [
   { 
     id: 1, 
@@ -33,13 +32,13 @@ const datosIniciales = [
 ];
 
 function App() {
-  // --- AUTENTICACIÓN ---
+  // AUTENTICACIÓN
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
   const [errorLogin, setErrorLogin] = useState('');
 
-  // --- PACIENTES Y CITAS (Persistidos en localStorage) ---
+  //  PACIENTES Y CITAS
   const [pacientes, setPacientes] = useState(() => {
     const pacientesGuardados = localStorage.getItem('clinica_pacientes');
     if (pacientesGuardados) {
@@ -53,12 +52,12 @@ function App() {
     return datosIniciales;
   });
 
-  // Guardar automáticamente en localStorage cada vez que cambie la lista de pacientes
+
   useEffect(() => {
     localStorage.setItem('clinica_pacientes', JSON.stringify(pacientes));
   }, [pacientes]);
 
-  // --- FORMULARIO PACIENTE ---
+  //FORMULARIO PACIENTE 
   const [form, setForm] = useState({ 
     dni: '', 
     nombre: '', 
@@ -72,11 +71,11 @@ function App() {
 
   const [editandoId, setEditandoId] = useState(null); // Controla el modo edición
 
-  // --- FILTROS ---
+  // FILTROS
   const [busqueda, setBusqueda] = useState('');
   const [filtroEstado, setFiltroEstado] = useState('Todos');
 
-  // --- MODALES ---
+  // MODALES
   const [pacienteFicha, setPacienteFicha] = useState(null);
   const [fichaForm, setFichaForm] = useState({ presion: '', temperatura: '', peso: '', alergias: '', diagnostico: '', tratamiento: '' });
 
@@ -100,7 +99,7 @@ function App() {
     setPassword('');
   };
 
-  // Guardar Paciente (Alta o Modificación)
+  // Guardar Paciente 
   const guardarPaciente = (e) => {
     e.preventDefault();
     if (!form.dni || !form.nombre || !form.edad) {
@@ -109,13 +108,13 @@ function App() {
     }
 
     if (editandoId !== null) {
-      // MODO EDICIÓN: Actualiza los campos manteniendo datos existentes como estado/citas
+      // EDICIÓN: Actualiza los campos manteniendo datos existentes como estado/citas
       setPacientes(pacientes.map(p => 
         p.id === editandoId ? { ...p, ...form, edad: Number(form.edad) } : p
       ));
       setEditandoId(null);
     } else {
-      // MODO REGISTRO NUEVO
+      // REGISTRO NUEVO
       const nuevo = {
         id: Date.now(),
         ...form,
@@ -216,21 +215,21 @@ function App() {
     boxSizing: 'border-box'
   };
 
-  // --- VISTA LOGIN ---
+  // LOGIN
   if (!isAuthenticated) {
     return (
       <div style={{ minHeight: '100vh', width: '100vw', backgroundColor: '#f0f2f5', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 0, padding: 0, boxSizing: 'border-box', fontFamily: 'sans-serif' }}>
         <div style={{ backgroundColor: '#ffffff', color: '#000000', padding: '30px', width: '100%', maxWidth: '380px', border: '1px solid #ccc', boxSizing: 'border-box' }}>
           <h2 style={{ color: '#0033aa', marginTop: 0, textAlign: 'center' }}> Iniciar Sesión</h2>
           {errorLogin && <p style={{ color: 'red', fontSize: '0.85rem', textAlign: 'center' }}>{errorLogin}</p>}
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleLogin}> 
             <div style={{ marginBottom: '12px' }}>
               <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '4px' }}>Usuario:</label>
               <input type="text" value={usuario} onChange={(e) => setUsuario(e.target.value)} placeholder="ingrese su nombre de usuario" style={{ ...inputBasico, width: '100%' }} />
             </div>
             <div style={{ marginBottom: '18px' }}>
               <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '4px' }}>Contraseña:</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={{ ...inputBasico, width: '100%' }} />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="ingrese su contraseña" style={{ ...inputBasico, width: '100%' }} />
             </div>
             <button type="submit" style={{ width: '100%', backgroundColor: '#0033aa', color: '#fff', border: 'none', padding: '10px', cursor: 'pointer', fontWeight: 'bold' }}>
               Entrar
@@ -239,6 +238,7 @@ function App() {
         </div>
       </div>
     );
+     
   }
 
   // VISTA PANEL PRINCIPAL
@@ -246,6 +246,7 @@ function App() {
     <div style={{ minHeight: '100vh', width: '100vw', backgroundColor: '#ffffff', color: '#000000', fontFamily: 'sans-serif', margin: 0, padding: 0, boxSizing: 'border-box' }}>
       
       {/* Barra Superior */}
+      
       <div style={{ backgroundColor: '#0033aa', color: '#ffffff', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ margin: 0, fontSize: '1.2rem' }}> Clínica Médica </h2>
         <div>
@@ -267,15 +268,15 @@ function App() {
           <form onSubmit={guardarPaciente}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px', marginBottom: '10px' }}>
               <div>
-                <label style={{ fontSize: '0.8rem', display: 'block' }}>DNI / Cédula *</label>
+                <label style={{ fontSize: '0.8rem', display: 'block' }}>DNI / Cédula </label>
                 <input type="text" value={form.dni} onChange={(e) => setForm({ ...form, dni: e.target.value })} placeholder="0801-1990-12345" style={{ ...inputBasico, width: '100%' }} />
               </div>
               <div>
-                <label style={{ fontSize: '0.8rem', display: 'block' }}>Nombre Completo *</label>
+                <label style={{ fontSize: '0.8rem', display: 'block' }}>Nombre Completo </label>
                 <input type="text" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} placeholder="Ej. Ana Martínez" style={{ ...inputBasico, width: '100%' }} />
               </div>
               <div>
-                <label style={{ fontSize: '0.8rem', display: 'block' }}>Edad *</label>
+                <label style={{ fontSize: '0.8rem', display: 'block' }}>Edad</label>
                 <input type="number" value={form.edad} onChange={(e) => setForm({ ...form, edad: e.target.value })} placeholder="32" style={{ ...inputBasico, width: '100%' }} />
               </div>
               <div>
@@ -441,10 +442,7 @@ function App() {
                   <label style={{ fontSize: '0.75rem', display: 'block' }}>Presión:</label>
                   <input type="text" value={fichaForm.presion} onChange={(e) => setFichaForm({ ...fichaForm, presion: e.target.value })} placeholder="120/80" style={{ ...inputBasico, width: '100%' }} />
                 </div>
-                <div>
-                  <label style={{ fontSize: '0.75rem', display: 'block' }}>Temperatura:</label>
-                  <input type="text" value={fichaForm.temperatura} onChange={(e) => setFichaForm({ ...fichaForm, temperatura: e.target.value })} placeholder="37 °C" style={{ ...inputBasico, width: '100%' }} />
-                </div>
+                
                 <div>
                   <label style={{ fontSize: '0.75rem', display: 'block' }}>Peso:</label>
                   <input type="text" value={fichaForm.peso} onChange={(e) => setFichaForm({ ...fichaForm, peso: e.target.value })} placeholder="70 kg" style={{ ...inputBasico, width: '100%' }} />
