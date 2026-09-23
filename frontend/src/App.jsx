@@ -239,7 +239,18 @@ function App() {
   // LOGIN
   if (!isAuthenticated) {
     return (
-      <div style={{ minHeight: '100vh', width: '100vw', backgroundColor: '#f0f2f5', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 0, padding: 0, boxSizing: 'border-box', fontFamily: 'sans-serif' }}>
+      <div style={{ 
+        minHeight: '100vh', 
+        width: '100%', 
+        backgroundColor: '#f0f2f5', 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        margin: 0, 
+        padding: '20px', 
+        boxSizing: 'border-box', 
+        fontFamily: 'sans-serif' 
+      }}>
         <div style={{ backgroundColor: '#ffffff', color: '#000000', padding: '30px', width: '100%', maxWidth: '380px', border: '1px solid #ccc', boxSizing: 'border-box' }}>
           <h2 style={{ color: '#0033aa', marginTop: 0, textAlign: 'center' }}> Iniciar Sesión</h2>
           {errorLogin && <p style={{ color: 'red', fontSize: '0.85rem', textAlign: 'center' }}>{errorLogin}</p>}
