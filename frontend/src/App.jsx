@@ -5,6 +5,7 @@ const datosIniciales = [
     id: 1, 
     dni: "0801-1998-01234", 
     nombre: "Carlos Mendoza", 
+    fechaNacimiento: "1981-05-15",
     edad: 45, 
     telefono: "9988-7766", 
     email: "carlos@email.com",
@@ -19,6 +20,7 @@ const datosIniciales = [
     id: 2, 
     dni: "0801-2001-05678", 
     nombre: "María López", 
+    fechaNacimiento: "2001-08-20",
     edad: 25, 
     telefono: "8877-6655", 
     email: "maria@email.com",
@@ -38,7 +40,7 @@ function App() {
   const [password, setPassword] = useState('');
   const [errorLogin, setErrorLogin] = useState('');
 
-  //  PACIENTES Y CITAS
+  // PACIENTES Y CITAS
   const [pacientes, setPacientes] = useState(() => {
     const pacientesGuardados = localStorage.getItem('clinica_pacientes');
     if (pacientesGuardados) {
@@ -52,15 +54,15 @@ function App() {
     return datosIniciales;
   });
 
-
   useEffect(() => {
     localStorage.setItem('clinica_pacientes', JSON.stringify(pacientes));
   }, [pacientes]);
 
-  //FORMULARIO PACIENTE 
+  // FORMULARIO PACIENTE
   const [form, setForm] = useState({ 
     dni: '', 
     nombre: '', 
+    fechaNacimiento: '',
     edad: '', 
     telefono: '', 
     email: '', 
@@ -69,7 +71,7 @@ function App() {
     sintoma: '' 
   });
 
-  const [editandoId, setEditandoId] = useState(null); // Controla el modo edición
+  const [editandoId, setEditandoId] = useState(null);
 
   // FILTROS
   const [busqueda, setBusqueda] = useState('');
@@ -82,7 +84,32 @@ function App() {
   const [pacienteCita, setPacienteCita] = useState(null);
   const [citaForm, setCitaForm] = useState({ fecha: '', hora: '', motivo: '' });
 
-  // Permite ingresar con cualquier usuario/clave no vacíos
+  // FUNCIÓN PARA CALCULAR LA EDAD AUTOMÁTICAMENTE
+  const calcularEdad = (fechaNacimiento) => {
+    if (!fechaNacimiento) return '';
+    const hoy = new Date();
+    const nac = new Date(fechaNacimiento);
+    let edadCalculada = hoy.getFullYear() - nac.getFullYear();
+    const mes = hoy.getMonth() - nac.getMonth();
+    
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nac.getDate())) {
+      edadCalculada--;
+    }
+    return edadCalculada >= 0 ? edadCalculada : '';
+  };
+
+  const handleFechaNacimientoChange = (e) => {
+    const fecha = e.target.value;
+    const edadCalculada = calcularEdad(fecha);
+    
+    setForm({
+      ...form,
+      fechaNacimiento: fecha,
+      edad: edadCalculada
+    });
+  };
+
+  // HANDLERS
   const handleLogin = (e) => {
     e.preventDefault();
     if (usuario.trim() !== '' && password.trim() !== '') {
@@ -99,26 +126,25 @@ function App() {
     setPassword('');
   };
 
-  // Guardar Paciente 
   const guardarPaciente = (e) => {
     e.preventDefault();
-    if (!form.dni || !form.nombre || !form.edad) {
-      alert("Por favor ingresa al menos DNI, Nombre y Edad.");
+
+    // Validamos únicamente Nombre y Motivo de Consulta como campos obligatorios
+    if (!form.nombre.trim() || !form.sintoma.trim()) {
+      alert("El Nombre y el Motivo de Consulta son obligatorios.");
       return;
     }
 
     if (editandoId !== null) {
-      // EDICIÓN: Actualiza los campos manteniendo datos existentes como estado/citas
       setPacientes(pacientes.map(p => 
-        p.id === editandoId ? { ...p, ...form, edad: Number(form.edad) } : p
+        p.id === editandoId ? { ...p, ...form, edad: Number(form.edad) || 0 } : p
       ));
       setEditandoId(null);
     } else {
-      // REGISTRO NUEVO
       const nuevo = {
         id: Date.now(),
         ...form,
-        edad: Number(form.edad),
+        edad: Number(form.edad) || 0,
         estado: "Pendiente",
         proximaCita: "Sin agendar",
         fichaClinica: { presion: '', temperatura: '', peso: '', alergias: '', diagnostico: '', tratamiento: '' }
@@ -127,20 +153,20 @@ function App() {
     }
 
     // Resetear formulario
-    setForm({ dni: '', nombre: '', edad: '', telefono: '', email: '', genero: 'Masculino', tipoSangre: 'O+', sintoma: '' });
+    setForm({ dni: '', nombre: '', fechaNacimiento: '', edad: '', telefono: '', email: '', genero: 'Masculino', tipoSangre: 'O+', sintoma: '' });
   };
 
-  // Cargar paciente en el formulario para editar
   const iniciarEdicion = (p) => {
     setEditandoId(p.id);
     setForm({
-      dni: p.dni,
-      nombre: p.nombre,
-      edad: p.edad,
+      dni: p.dni || '',
+      nombre: p.nombre || '',
+      fechaNacimiento: p.fechaNacimiento || '',
+      edad: p.edad || '',
       telefono: p.telefono || '',
       email: p.email || '',
-      genero: p.genero,
-      tipoSangre: p.tipoSangre,
+      genero: p.genero || 'Masculino',
+      tipoSangre: p.tipoSangre || 'O+',
       sintoma: p.sintoma || ''
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -148,10 +174,9 @@ function App() {
 
   const cancelarEdicion = () => {
     setEditandoId(null);
-    setForm({ dni: '', nombre: '', edad: '', telefono: '', email: '', genero: 'Masculino', tipoSangre: 'O+', sintoma: '' });
+    setForm({ dni: '', nombre: '', fechaNacimiento: '', edad: '', telefono: '', email: '', genero: 'Masculino', tipoSangre: 'O+', sintoma: '' });
   };
 
-  // Eliminar paciente
   const eliminarPaciente = (id, nombre) => {
     if (window.confirm(`¿Está seguro de que desea eliminar al paciente "${nombre}"?`)) {
       setPacientes(pacientes.filter(p => p.id !== id));
@@ -159,14 +184,12 @@ function App() {
     }
   };
 
-  // Cambiar Estado
   const toggleEstado = (id) => {
     setPacientes(pacientes.map(p => 
       p.id === id ? { ...p, estado: p.estado === 'Pendiente' ? 'Atendido' : 'Pendiente' } : p
     ));
   };
 
-  // Abrir Ficha Médica
   const abrirFicha = (p) => {
     setPacienteFicha(p);
     setFichaForm(p.fichaClinica || { presion: '', temperatura: '', peso: '', alergias: '', diagnostico: '', tratamiento: '' });
@@ -180,7 +203,6 @@ function App() {
     setPacienteFicha(null);
   };
 
-  // Agendar Cita
   const abrirAgendarCita = (p) => {
     setPacienteCita(p);
     setCitaForm({ fecha: '', hora: '', motivo: p.sintoma || '' });
@@ -199,7 +221,6 @@ function App() {
     setPacienteCita(null);
   };
 
-  // Filtro
   const pacientesFiltrados = pacientes.filter(p => {
     const texto = p.nombre.toLowerCase().includes(busqueda.toLowerCase()) || p.dni.includes(busqueda);
     const estado = filtroEstado === 'Todos' || p.estado === filtroEstado;
@@ -238,15 +259,13 @@ function App() {
         </div>
       </div>
     );
-     
   }
 
-  // VISTA PANEL PRINCIPAL
+  // PANEL PRINCIPAL
   return (
     <div style={{ minHeight: '100vh', width: '100vw', backgroundColor: '#ffffff', color: '#000000', fontFamily: 'sans-serif', margin: 0, padding: 0, boxSizing: 'border-box' }}>
       
       {/* Barra Superior */}
-      
       <div style={{ backgroundColor: '#0033aa', color: '#ffffff', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ margin: 0, fontSize: '1.2rem' }}> Clínica Médica </h2>
         <div>
@@ -259,7 +278,7 @@ function App() {
 
       <div style={{ padding: '20px', maxWidth: '100%', boxSizing: 'border-box' }}>
         
-        {/* REGISTRO / EDICIÓN DE PACIENTE */}
+        
         <fieldset style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '20px' }}>
           <legend style={{ fontWeight: 'bold', color: editandoId !== null ? '#001da0' : '#0033aa' }}>
             {editandoId !== null ? ' Editar Paciente' : ' Registrar Nuevo Paciente'}
@@ -268,25 +287,38 @@ function App() {
           <form onSubmit={guardarPaciente}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px', marginBottom: '10px' }}>
               <div>
-                <label style={{ fontSize: '0.8rem', display: 'block' }}>DNI / Cédula </label>
-                <input type="text" value={form.dni} onChange={(e) => setForm({ ...form, dni: e.target.value })} placeholder="0801-1990-12345" style={{ ...inputBasico, width: '100%' }} />
+                <label style={{ fontSize: '0.8rem', display: 'block' }}>DNI / Cédula*</label>
+                <input type="text" value={form.dni} onChange={(e) => setForm({ ...form, dni: e.target.value })} style={{ ...inputBasico, width: '100%' }} />
               </div>
+              
+              
               <div>
-                <label style={{ fontSize: '0.8rem', display: 'block' }}>Nombre Completo </label>
-                <input type="text" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} placeholder="Ej. Ana Martínez" style={{ ...inputBasico, width: '100%' }} />
+                <label style={{ fontSize: '0.8rem', display: 'block' }}>Nombre Completo*</label>
+                <input type="text" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required style={{ ...inputBasico, width: '100%' }} />
               </div>
+
+            
               <div>
-                <label style={{ fontSize: '0.8rem', display: 'block' }}>Edad</label>
-                <input type="number" value={form.edad} onChange={(e) => setForm({ ...form, edad: e.target.value })} placeholder="32" style={{ ...inputBasico, width: '100%' }} />
+                <label style={{ fontSize: '0.8rem', display: 'block' }}>Fecha de Nacimiento</label>
+                <input type="date" value={form.fechaNacimiento} onChange={handleFechaNacimientoChange} style={{ ...inputBasico, width: '100%' }} />
               </div>
+
+              
+              <div>
+                <label style={{ fontSize: '0.8rem', display: 'block' }}>Edad (años)</label>
+                <input type="number" value={form.edad} readOnly style={{ ...inputBasico, width: '100%', backgroundColor: '#f0f0f0' }} />
+              </div>
+
               <div>
                 <label style={{ fontSize: '0.8rem', display: 'block' }}>Teléfono</label>
-                <input type="text" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} placeholder="9900-1122" style={{ ...inputBasico, width: '100%' }} />
+                <input type="text" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} style={{ ...inputBasico, width: '100%' }} />
               </div>
+
               <div>
                 <label style={{ fontSize: '0.8rem', display: 'block' }}>Correo Electrónico</label>
-                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="correo@ejemplo.com" style={{ ...inputBasico, width: '100%' }} />
+                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} style={{ ...inputBasico, width: '100%' }} />
               </div>
+
               <div>
                 <label style={{ fontSize: '0.8rem', display: 'block' }}>Género</label>
                 <select value={form.genero} onChange={(e) => setForm({ ...form, genero: e.target.value })} style={{ ...inputBasico, width: '100%' }}>
@@ -295,6 +327,7 @@ function App() {
                   <option value="Otro">Otro</option>
                 </select>
               </div>
+
               <div>
                 <label style={{ fontSize: '0.8rem', display: 'block' }}>Grupo Sanguíneo</label>
                 <select value={form.tipoSangre} onChange={(e) => setForm({ ...form, tipoSangre: e.target.value })} style={{ ...inputBasico, width: '100%' }}>
@@ -305,9 +338,10 @@ function App() {
               </div>
             </div>
 
+            
             <div style={{ marginBottom: '10px' }}>
-              <label style={{ fontSize: '0.8rem', display: 'block' }}>Síntoma o Motivo de Consulta</label>
-              <input type="text" value={form.sintoma} onChange={(e) => setForm({ ...form, sintoma: e.target.value })} placeholder="Ej. Dolor de cabeza" style={{ ...inputBasico, width: '100%' }} />
+              <label style={{ fontSize: '0.8rem', display: 'block' }}>Síntoma o Motivo de Consulta *</label>
+              <input type="text" value={form.sintoma} onChange={(e) => setForm({ ...form, sintoma: e.target.value })} placeholder="Ej. Dolor de cabeza persistente" required style={{ ...inputBasico, width: '100%' }} />
             </div>
 
             <div style={{ display: 'flex', gap: '8px' }}>
@@ -323,7 +357,7 @@ function App() {
           </form>
         </fieldset>
 
-        {/* TABLA DE PACIENTES */}
+        
         <fieldset style={{ border: '1px solid #ccc', padding: '15px' }}>
           <legend style={{ fontWeight: 'bold', color: '#0033aa' }}> Pacientes Registrados</legend>
           
@@ -347,12 +381,12 @@ function App() {
               <thead>
                 <tr style={{ backgroundColor: '#f0f0f0', color: '#0033aa' }}>
                   <th>DNI</th>
-                  <th>Nombre</th>
-                  <th>Datos</th>
-                  <th>Síntoma</th>
-                  <th>Próxima Cita</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
+                  <th>NOMBRE</th>
+                  <th>DATOS</th>
+                  <th>SÍNTOMAS</th>
+                  <th>PRÓXIMA CITA</th>
+                  <th>ESTADO</th>
+                  <th>ACCIONES</th>
                 </tr>
               </thead>
               <tbody>
@@ -361,9 +395,9 @@ function App() {
                 ) : (
                   pacientesFiltrados.map((p) => (
                     <tr key={p.id}>
-                      <td>{p.dni}</td>
+                      <td>{p.dni || 'S/N'}</td>
                       <td><strong>{p.nombre}</strong></td>
-                      <td>{p.edad} años | {p.genero} | <strong>{p.tipoSangre}</strong></td>
+                      <td>{p.edad ? `${p.edad} años` : 'S/E'} | {p.genero} | <strong>{p.tipoSangre}</strong></td>
                       <td>{p.sintoma}</td>
                       <td style={{ color: p.proximaCita !== 'Sin agendar' ? '#0033aa' : '#666', fontWeight: p.proximaCita !== 'Sin agendar' ? 'bold' : 'normal' }}>
                         {p.proximaCita}
@@ -402,7 +436,9 @@ function App() {
 
       </div>
 
-      {/* MODAL AGENDAR CITA */}
+      
+
+
       {pacienteCita && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <div style={{ backgroundColor: '#fff', border: '2px solid #0033aa', padding: '20px', width: '320px' }}>
@@ -429,7 +465,8 @@ function App() {
         </div>
       )}
 
-      {/* MODAL FICHA CLÍNICA */}
+      
+
       {pacienteFicha && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <div style={{ backgroundColor: '#fff', border: '2px solid #0033aa', padding: '20px', width: '450px', maxHeight: '85vh', overflowY: 'auto' }}>
@@ -442,7 +479,6 @@ function App() {
                   <label style={{ fontSize: '0.75rem', display: 'block' }}>Presión:</label>
                   <input type="text" value={fichaForm.presion} onChange={(e) => setFichaForm({ ...fichaForm, presion: e.target.value })} placeholder="120/80" style={{ ...inputBasico, width: '100%' }} />
                 </div>
-                
                 <div>
                   <label style={{ fontSize: '0.75rem', display: 'block' }}>Peso:</label>
                   <input type="text" value={fichaForm.peso} onChange={(e) => setFichaForm({ ...fichaForm, peso: e.target.value })} placeholder="70 kg" style={{ ...inputBasico, width: '100%' }} />
