@@ -7,9 +7,11 @@ const datosIniciales = [
     nombre: "Carlos Mendoza", 
     fechaNacimiento: "1981-05-15",
     edad: 45, 
-    telefono: "9988-7766", 
+    telefono: "99887766", 
     email: "carlos@email.com",
     genero: "Masculino",
+    contactoNombre: "Ana Mendoza",
+    contactoTelefono: "99881122",
     tipoSangre: "O+",
     sintoma: "Fiebre persistente", 
     estado: "Pendiente",
@@ -22,9 +24,11 @@ const datosIniciales = [
     nombre: "María López", 
     fechaNacimiento: "2001-08-20",
     edad: 25, 
-    telefono: "8877-6655", 
+    telefono: "88776655", 
     email: "maria@email.com",
     genero: "Femenino",
+    contactoNombre: "Pedro López",
+    contactoTelefono: "88773344",
     tipoSangre: "A+",
     sintoma: "Chequeo de rutina", 
     estado: "Atendido",
@@ -40,7 +44,7 @@ function App() {
   const [password, setPassword] = useState('');
   const [errorLogin, setErrorLogin] = useState('');
 
-  // PACIENTES Y CITAS
+  // PACIENTES Y CITAS (Persistencia con localStorage)
   const [pacientes, setPacientes] = useState(() => {
     const pacientesGuardados = localStorage.getItem('clinica_pacientes');
     if (pacientesGuardados) {
@@ -67,6 +71,8 @@ function App() {
     telefono: '', 
     email: '', 
     genero: 'Masculino', 
+    contactoNombre: '',
+    contactoTelefono: '',
     tipoSangre: 'O+', 
     sintoma: '' 
   });
@@ -84,7 +90,7 @@ function App() {
   const [pacienteCita, setPacienteCita] = useState(null);
   const [citaForm, setCitaForm] = useState({ fecha: '', hora: '', motivo: '' });
 
-  // FUNCIÓN PARA CALCULAR LA EDAD AUTOMÁTICAMENTE
+  // CALCULAR EDAD AUTOMÁTICAMENTE
   const calcularEdad = (fechaNacimiento) => {
     if (!fechaNacimiento) return '';
     const hoy = new Date();
@@ -129,7 +135,6 @@ function App() {
   const guardarPaciente = (e) => {
     e.preventDefault();
 
-    // Validamos únicamente Nombre y Motivo de Consulta como campos obligatorios
     if (!form.nombre.trim() || !form.sintoma.trim()) {
       alert("El Nombre y el Motivo de Consulta son obligatorios.");
       return;
@@ -152,8 +157,7 @@ function App() {
       setPacientes([nuevo, ...pacientes]);
     }
 
-    // Resetear formulario
-    setForm({ dni: '', nombre: '', fechaNacimiento: '', edad: '', telefono: '', email: '', genero: 'Masculino', tipoSangre: 'O+', sintoma: '' });
+    setForm({ dni: '', nombre: '', fechaNacimiento: '', edad: '', telefono: '', email: '', genero: 'Masculino', contactoNombre: '', contactoTelefono: '', tipoSangre: 'O+', sintoma: '' });
   };
 
   const iniciarEdicion = (p) => {
@@ -166,6 +170,8 @@ function App() {
       telefono: p.telefono || '',
       email: p.email || '',
       genero: p.genero || 'Masculino',
+      contactoNombre: p.contactoNombre || '',
+      contactoTelefono: p.contactoTelefono || '',
       tipoSangre: p.tipoSangre || 'O+',
       sintoma: p.sintoma || ''
     });
@@ -174,7 +180,7 @@ function App() {
 
   const cancelarEdicion = () => {
     setEditandoId(null);
-    setForm({ dni: '', nombre: '', fechaNacimiento: '', edad: '', telefono: '', email: '', genero: 'Masculino', tipoSangre: 'O+', sintoma: '' });
+    setForm({ dni: '', nombre: '', fechaNacimiento: '', edad: '', telefono: '', email: '', genero: 'Masculino', contactoNombre: '', contactoTelefono: '', tipoSangre: 'O+', sintoma: '' });
   };
 
   const eliminarPaciente = (id, nombre) => {
@@ -251,7 +257,7 @@ function App() {
         boxSizing: 'border-box', 
         fontFamily: 'sans-serif' 
       }}>
-        <div style={{ backgroundColor: '#ffffff', color: '#000000', padding: '30px', width: '100%', maxWidth: '380px', border: '1px solid #ccc', boxSizing: 'border-box' }}>
+        <div style={{ backgroundColor: '#ffffff', color: '#000000', padding: '30px', width: '100%', maxWidth: '380px', border: '1px solid #ccc', boxSizing: 'border-box', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
           <h2 style={{ color: '#0033aa', marginTop: 0, textAlign: 'center' }}> Iniciar Sesión</h2>
           {errorLogin && <p style={{ color: 'red', fontSize: '0.85rem', textAlign: 'center' }}>{errorLogin}</p>}
           <form onSubmit={handleLogin}> 
@@ -274,11 +280,11 @@ function App() {
 
   // PANEL PRINCIPAL
   return (
-    <div style={{ minHeight: '100vh', width: '100vw', backgroundColor: '#ffffff', color: '#000000', fontFamily: 'sans-serif', margin: 0, padding: 0, boxSizing: 'border-box' }}>
+    <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#ffffff', color: '#000000', fontFamily: 'sans-serif', margin: 0, padding: 0, boxSizing: 'border-box', overflowX: 'hidden' }}>
       
       {/* Barra Superior */}
       <div style={{ backgroundColor: '#0033aa', color: '#ffffff', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{ margin: 0, fontSize: '1.2rem' }}> Clínica Médica </h2>
+        <h2 style={{ margin: 0, fontSize: '1.2rem', color: '#ffffff' }}> Clínica Médica </h2>
         <div>
           <span>Médico: <strong>{usuario}</strong> </span>
           <button onClick={handleLogout} style={{ backgroundColor: '#255994', color: '#fff', border: 'none', padding: '6px 12px', cursor: 'pointer', marginLeft: '10px' }}>
@@ -287,8 +293,7 @@ function App() {
         </div>
       </div>
 
-      <div style={{ padding: '20px', maxWidth: '100%', boxSizing: 'border-box' }}>
-        
+      <div style={{ padding: '20px', width: '100%', boxSizing: 'border-box' }}>
         
         <fieldset style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '20px' }}>
           <legend style={{ fontWeight: 'bold', color: editandoId !== null ? '#001da0' : '#0033aa' }}>
@@ -297,32 +302,35 @@ function App() {
           
           <form onSubmit={guardarPaciente}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px', marginBottom: '10px' }}>
-              <div>
-                <label style={{ fontSize: '0.8rem', display: 'block' }}>DNI / Cédula*</label>
-                <input type="text" value={form.dni} onChange={(e) => setForm({ ...form, dni: e.target.value })} style={{ ...inputBasico, width: '100%' }} />
-              </div>
-              
               
               <div>
-                <label style={{ fontSize: '0.8rem', display: 'block' }}>Nombre Completo*</label>
+                <label style={{ fontSize: '0.8rem', display: 'block' }}>Nombre Completo *</label>
                 <input type="text" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required style={{ ...inputBasico, width: '100%' }} />
               </div>
 
-            
+              <div>
+                <label style={{ fontSize: '0.8rem', display: 'block' }}>DNI / Cédula</label>
+                <input type="text" value={form.dni} onChange={(e) => setForm({ ...form, dni: e.target.value })} style={{ ...inputBasico, width: '100%' }} />
+              </div>
+
               <div>
                 <label style={{ fontSize: '0.8rem', display: 'block' }}>Fecha de Nacimiento</label>
                 <input type="date" value={form.fechaNacimiento} onChange={handleFechaNacimientoChange} style={{ ...inputBasico, width: '100%' }} />
               </div>
 
-              
               <div>
-                <label style={{ fontSize: '0.8rem', display: 'block' }}>Edad (años)</label>
+                <label style={{ fontSize: '0.8rem', display: 'block' }}>Edad </label>
                 <input type="number" value={form.edad} readOnly style={{ ...inputBasico, width: '100%', backgroundColor: '#f0f0f0' }} />
               </div>
 
               <div>
                 <label style={{ fontSize: '0.8rem', display: 'block' }}>Teléfono</label>
-                <input type="text" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} style={{ ...inputBasico, width: '100%' }} />
+                <input 
+                  type="tel" 
+                  value={form.telefono} 
+                  onChange={(e) => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '') })} 
+                  style={{ ...inputBasico, width: '100%' }} 
+                />
               </div>
 
               <div>
@@ -340,6 +348,21 @@ function App() {
               </div>
 
               <div>
+                <label style={{ fontSize: '0.8rem', display: 'block' }}>Nom. contacto emergencia</label>
+                <input type="text" value={form.contactoNombre} onChange={(e) => setForm({ ...form, contactoNombre: e.target.value })} style={{ ...inputBasico, width: '100%' }} />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.8rem', display: 'block' }}>Tel. contacto emergencia</label>
+                <input 
+                  type="tel" 
+                  value={form.contactoTelefono} 
+                  onChange={(e) => setForm({ ...form, contactoTelefono: e.target.value.replace(/\D/g, '') })} 
+                  style={{ ...inputBasico, width: '100%' }} 
+                />
+              </div>
+
+              <div>
                 <label style={{ fontSize: '0.8rem', display: 'block' }}>Grupo Sanguíneo</label>
                 <select value={form.tipoSangre} onChange={(e) => setForm({ ...form, tipoSangre: e.target.value })} style={{ ...inputBasico, width: '100%' }}>
                   {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(tipo => (
@@ -351,8 +374,12 @@ function App() {
 
             
             <div style={{ marginBottom: '10px' }}>
-              <label style={{ fontSize: '0.8rem', display: 'block' }}>Síntoma o Motivo de Consulta *</label>
-              <input type="text" value={form.sintoma} onChange={(e) => setForm({ ...form, sintoma: e.target.value })} placeholder="Ej. Dolor de cabeza persistente" required style={{ ...inputBasico, width: '100%' }} />
+              <label style={{ fontSize: '0.99rem', fontWeight: 'bold', color: '#0033aa', display: 'block', marginBottom: '4px' }}>
+                Síntoma o Motivo de Consulta *
+              </label>
+              <input type="text" value={form.sintoma} onChange={(e) => setForm({ ...form, sintoma: e.target.value })} 
+                 placeholder="Ej. Dolor de cabeza persistente" required 
+                 style={{ ...inputBasico, width: '100%' }} />
             </div>
 
             <div style={{ display: 'flex', gap: '8px' }}>
@@ -368,7 +395,6 @@ function App() {
           </form>
         </fieldset>
 
-        
         <fieldset style={{ border: '1px solid #ccc', padding: '15px' }}>
           <legend style={{ fontWeight: 'bold', color: '#0033aa' }}> Pacientes Registrados</legend>
           
@@ -387,7 +413,7 @@ function App() {
             </select>
           </div>
 
-          <div style={{ overflowX: 'auto' }}>
+          <div style={{ overflowX: 'auto', width: '100%' }}>
             <table border="1" cellPadding="8" cellSpacing="0" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', borderColor: '#ccc', fontSize: '0.85rem' }}>
               <thead>
                 <tr style={{ backgroundColor: '#f0f0f0', color: '#0033aa' }}>
@@ -420,7 +446,7 @@ function App() {
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                          <button onClick={() => toggleEstado(p.id)} style={{ backgroundColor: p.estado === 'Pendiente' ? '#5cb85c' : '#ceb237', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
+                          <button onClick={() => toggleEstado(p.id)} style={{ backgroundColor: p.estado === 'Pendiente' ? '#279727' : '#cea800', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
                             {p.estado === 'Pendiente' ? 'Atender' : 'A Pendiente'}
                           </button>
                           <button onClick={() => abrirAgendarCita(p)} style={{ backgroundColor: '#337ab7', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
@@ -432,7 +458,7 @@ function App() {
                           <button onClick={() => iniciarEdicion(p)} style={{ backgroundColor: '#3b80db', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
                              Editar
                           </button>
-                          <button onClick={() => eliminarPaciente(p.id, p.nombre)} style={{ backgroundColor: '#d9534f', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
+                          <button onClick={() => eliminarPaciente(p.id, p.nombre)} style={{ backgroundColor: '#bb2c27', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
                              Eliminar
                           </button>
                         </div>
@@ -451,8 +477,8 @@ function App() {
 
 
       {pacienteCita && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ backgroundColor: '#fff', border: '2px solid #0033aa', padding: '20px', width: '320px' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+          <div style={{ backgroundColor: '#fff', border: '2px solid #0033aa', padding: '20px', width: '320px', maxWidth: '90%' }}>
             <h3 style={{ marginTop: 0, color: '#0033aa' }}> Agendar Cita: {pacienteCita.nombre}</h3>
             <form onSubmit={guardarCita}>
               <div style={{ marginBottom: '10px' }}>
@@ -476,11 +502,10 @@ function App() {
         </div>
       )}
 
-      
-
+      {/* Modal Ficha */}
       {pacienteFicha && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ backgroundColor: '#fff', border: '2px solid #0033aa', padding: '20px', width: '450px', maxHeight: '85vh', overflowY: 'auto' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+          <div style={{ backgroundColor: '#fff', border: '2px solid #0033aa', padding: '20px', width: '450px', maxWidth: '90%', maxHeight: '85vh', overflowY: 'auto' }}>
             <h3 style={{ marginTop: 0, color: '#0033aa' }}>Ficha Médica: {pacienteFicha.nombre}</h3>
             <p style={{ fontSize: '0.8rem', margin: '0 0 10px 0' }}>DNI: {pacienteFicha.dni} | Sangre: <strong>{pacienteFicha.tipoSangre}</strong></p>
             
