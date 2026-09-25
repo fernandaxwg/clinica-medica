@@ -258,7 +258,7 @@ function App() {
         fontFamily: 'sans-serif' 
       }}>
         <div style={{ backgroundColor: '#ffffff', color: '#000000', padding: '30px', width: '100%', maxWidth: '380px', border: '1px solid #ccc', boxSizing: 'border-box', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-          <h2 style={{ color: '#0033aa', marginTop: 0, textAlign: 'center' }}> Iniciar Sesión</h2>
+          <h2 style={{ color: '#1d6a9e', marginTop: 0, textAlign: 'center' }}> Iniciar Sesión</h2>
           {errorLogin && <p style={{ color: 'red', fontSize: '0.85rem', textAlign: 'center' }}>{errorLogin}</p>}
           <form onSubmit={handleLogin}> 
             <div style={{ marginBottom: '12px' }}>
@@ -269,7 +269,7 @@ function App() {
               <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '4px' }}>Contraseña:</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="ingrese su contraseña" style={{ ...inputBasico, width: '100%' }} />
             </div>
-            <button type="submit" style={{ width: '100%', backgroundColor: '#0033aa', color: '#fff', border: 'none', padding: '10px', cursor: 'pointer', fontWeight: 'bold' }}>
+            <button type="submit" style={{ width: '100%', backgroundColor: '#004b7c', color: '#fff', border: 'none', padding: '10px', cursor: 'pointer', fontWeight: 'bold' }}>
               Entrar
             </button>
           </form>
@@ -283,11 +283,11 @@ function App() {
     <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#ffffff', color: '#000000', fontFamily: 'sans-serif', margin: 0, padding: 0, boxSizing: 'border-box', overflowX: 'hidden' }}>
       
       {/* Barra Superior */}
-      <div style={{ backgroundColor: '#0033aa', color: '#ffffff', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ backgroundColor: '#1d6a9e', color: '#ffffff', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ margin: 0, fontSize: '1.2rem', color: '#ffffff' }}> Clínica Médica </h2>
         <div>
           <span>Médico: <strong>{usuario}</strong> </span>
-          <button onClick={handleLogout} style={{ backgroundColor: '#255994', color: '#fff', border: 'none', padding: '6px 12px', cursor: 'pointer', marginLeft: '10px' }}>
+          <button onClick={handleLogout} style={{ backgroundColor: '#0e4e79', color: '#fff', border: 'none', padding: '6px 12px', cursor: 'pointer', marginLeft: '10px' }}>
             Salir
           </button>
         </div>
@@ -296,7 +296,7 @@ function App() {
       <div style={{ padding: '20px', width: '100%', boxSizing: 'border-box' }}>
         
         <fieldset style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '20px' }}>
-          <legend style={{ fontWeight: 'bold', color: editandoId !== null ? '#001da0' : '#0033aa' }}>
+          <legend style={{ fontWeight: 'bold', color: editandoId !== null ? '#13537e' : '#003a61' }}>
             {editandoId !== null ? ' Editar Paciente' : ' Registrar Nuevo Paciente'}
           </legend>
           
@@ -374,7 +374,7 @@ function App() {
 
             
             <div style={{ marginBottom: '10px' }}>
-              <label style={{ fontSize: '0.99rem', fontWeight: 'bold', color: '#0033aa', display: 'block', marginBottom: '4px' }}>
+              <label style={{ fontSize: '0.99rem', fontWeight: 'bold', color: '#003a61', display: 'block', marginBottom: '4px' }}>
                 Síntoma o Motivo de Consulta *
               </label>
               <input type="text" value={form.sintoma} onChange={(e) => setForm({ ...form, sintoma: e.target.value })} 
@@ -383,7 +383,7 @@ function App() {
             </div>
 
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button type="submit" style={{ backgroundColor: editandoId !== null ? '#0020ad' : '#0033aa', color: '#ffffff', border: 'none', padding: '8px 16px', cursor: 'pointer', fontWeight: 'bold' }}>
+              <button type="submit" style={{ backgroundColor: editandoId !== null ? '#1d6a9e' : '#1d6a9e', color: '#ffffff', border: 'none', padding: '8px 16px', cursor: 'pointer', fontWeight: 'bold' }}>
                 {editandoId !== null ? 'Actualizar Paciente' : 'Guardar Paciente'}
               </button>
               {editandoId !== null && (
@@ -396,7 +396,7 @@ function App() {
         </fieldset>
 
         <fieldset style={{ border: '1px solid #ccc', padding: '15px' }}>
-          <legend style={{ fontWeight: 'bold', color: '#0033aa' }}> Pacientes Registrados</legend>
+          <legend style={{ fontWeight: 'bold', color: '#003a61' }}> Pacientes Registrados</legend>
           
           <div style={{ display: 'flex', gap: '10px', marginBottom: '15px', flexWrap: 'wrap' }}>
             <input 
@@ -416,11 +416,11 @@ function App() {
           <div style={{ overflowX: 'auto', width: '100%' }}>
             <table border="1" cellPadding="8" cellSpacing="0" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', borderColor: '#ccc', fontSize: '0.85rem' }}>
               <thead>
-                <tr style={{ backgroundColor: '#f0f0f0', color: '#0033aa' }}>
+                <tr style={{ backgroundColor: '#f0f0f0', color: '#003a61' }}>
                   <th>DNI</th>
                   <th>NOMBRE</th>
                   <th>DATOS</th>
-                  <th>SÍNTOMAS</th>
+                  <th>MOTIVO</th>
                   <th>PRÓXIMA CITA</th>
                   <th>ESTADO</th>
                   <th>ACCIONES</th>
@@ -436,7 +436,7 @@ function App() {
                       <td><strong>{p.nombre}</strong></td>
                       <td>{p.edad ? `${p.edad} años` : 'S/E'} | {p.genero} | <strong>{p.tipoSangre}</strong></td>
                       <td>{p.sintoma}</td>
-                      <td style={{ color: p.proximaCita !== 'Sin agendar' ? '#0033aa' : '#666', fontWeight: p.proximaCita !== 'Sin agendar' ? 'bold' : 'normal' }}>
+                      <td style={{ color: p.proximaCita !== 'Sin agendar' ? '#1d6a9e' : '#666', fontWeight: p.proximaCita !== 'Sin agendar' ? 'bold' : 'normal' }}>
                         {p.proximaCita}
                       </td>
                       <td>
@@ -446,16 +446,16 @@ function App() {
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                          <button onClick={() => toggleEstado(p.id)} style={{ backgroundColor: p.estado === 'Pendiente' ? '#279727' : '#cea800', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
+                          <button onClick={() => toggleEstado(p.id)} style={{ backgroundColor: p.estado === 'Pendiente' ? '#0a810a' : '#d3ad02', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
                             {p.estado === 'Pendiente' ? 'Atender' : 'A Pendiente'}
                           </button>
-                          <button onClick={() => abrirAgendarCita(p)} style={{ backgroundColor: '#337ab7', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
+                          <button onClick={() => abrirAgendarCita(p)} style={{ backgroundColor: '#00427c', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
                              Cita
                           </button>
-                          <button onClick={() => abrirFicha(p)} style={{ backgroundColor: '#0033aa', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
+                          <button onClick={() => abrirFicha(p)} style={{ backgroundColor: '#0062a3', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
                              Ficha
                           </button>
-                          <button onClick={() => iniciarEdicion(p)} style={{ backgroundColor: '#3b80db', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
+                          <button onClick={() => iniciarEdicion(p)} style={{ backgroundColor: '#005eda', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
                              Editar
                           </button>
                           <button onClick={() => eliminarPaciente(p.id, p.nombre)} style={{ backgroundColor: '#bb2c27', color: '#fff', border: 'none', padding: '4px 8px', cursor: 'pointer', fontSize: '0.75rem' }}>
@@ -478,8 +478,8 @@ function App() {
 
       {pacienteCita && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-          <div style={{ backgroundColor: '#fff', border: '2px solid #0033aa', padding: '20px', width: '320px', maxWidth: '90%' }}>
-            <h3 style={{ marginTop: 0, color: '#0033aa' }}> Agendar Cita: {pacienteCita.nombre}</h3>
+          <div style={{ backgroundColor: '#fff', border: '2px solid #1d6a9e', padding: '20px', width: '320px', maxWidth: '90%' }}>
+            <h3 style={{ marginTop: 0, color: '#1d6a9e' }}> Agendar Cita: {pacienteCita.nombre}</h3>
             <form onSubmit={guardarCita}>
               <div style={{ marginBottom: '10px' }}>
                 <label style={{ fontSize: '0.8rem', display: 'block' }}>Fecha:</label>
@@ -495,18 +495,21 @@ function App() {
               </div>
               <div style={{ textAlign: 'right' }}>
                 <button type="button" onClick={() => setPacienteCita(null)} style={{ border: '1px solid #777', padding: '5px 10px', marginRight: '5px', cursor: 'pointer' }}>Cancelar</button>
-                <button type="submit" style={{ backgroundColor: '#0033aa', color: '#fff', border: 'none', padding: '5px 10px', cursor: 'pointer' }}>Guardar</button>
+                <button type="submit" style={{ backgroundColor: '#1d6a9e', color: '#fff', border: 'none', padding: '5px 10px', cursor: 'pointer' }}>Guardar</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* Modal Ficha */}
+    
+
+
+    
       {pacienteFicha && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-          <div style={{ backgroundColor: '#fff', border: '2px solid #0033aa', padding: '20px', width: '450px', maxWidth: '90%', maxHeight: '85vh', overflowY: 'auto' }}>
-            <h3 style={{ marginTop: 0, color: '#0033aa' }}>Ficha Médica: {pacienteFicha.nombre}</h3>
+          <div style={{ backgroundColor: '#fff', border: '2px solid #1d6a9e', padding: '20px', width: '450px', maxWidth: '90%', maxHeight: '85vh', overflowY: 'auto' }}>
+            <h3 style={{ marginTop: 0, color: '#1d6a9e' }}>Ficha Médica: {pacienteFicha.nombre}</h3>
             <p style={{ fontSize: '0.8rem', margin: '0 0 10px 0' }}>DNI: {pacienteFicha.dni} | Sangre: <strong>{pacienteFicha.tipoSangre}</strong></p>
             
             <form onSubmit={guardarFicha}>
@@ -537,7 +540,7 @@ function App() {
 
               <div style={{ textAlign: 'right' }}>
                 <button type="button" onClick={() => setPacienteFicha(null)} style={{ border: '1px solid #777', padding: '5px 10px', marginRight: '5px', cursor: 'pointer' }}>Cerrar</button>
-                <button type="submit" style={{ backgroundColor: '#0033aa', color: '#fff', border: 'none', padding: '5px 10px', cursor: 'pointer' }}>Guardar Ficha</button>
+                <button type="submit" style={{ backgroundColor: '#1d6a9e', color: '#fff', border: 'none', padding: '5px 10px', cursor: 'pointer' }}>Guardar Ficha</button>
               </div>
             </form>
           </div>
